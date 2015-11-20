@@ -1,11 +1,13 @@
 # GeoIP
 
+**Important: This tool uses the http://www.telize.com/ REST API to provide 
+query location information. Sadly, The public API for telize.com has permanently 
+shut down. I will update the tool to use as different geoip service when I have 
+some free time :)**  
+
 GeoIP is a command line tool, which allows you to query location information from 
 any IP address. GeoIP also exposes a library so you can also use it in your 
 application. 
-
-**Note:** This tool uses the http://www.telize.com/ REST API to provide query 
-location information.
 
 # Installation
 
