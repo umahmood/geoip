@@ -16,58 +16,59 @@ func startTestServer() *httptest.Server {
 			switch p {
 			case "/2a02:2770::21a:4aff:feb3:2ee":
 				response := `{"ip":"2a02:2770::21a:4aff:feb3:2ee",
-							"isp":"Tilaa V.O.F.",
-							"area_code":"0",
 							"country_code":"NL",
-							"country":"Netherlands",
-							"offset":"2",
-							"timezone":"Europe/Amsterdam",
-							"country_code3":"NLD",
-							"continent_code":"EU",
+							"country_name":"Netherlands",
+							"region_code":"",
+							"region_name":"",
+							"city":"",
+							"zip_code":"",
+							"time_zone":"Europe/Amsterdam",
+							"latitude":52.25,
 							"longitude":5.75,
-							"dma_code":"0",
-							"asn":"AS196752",
-							"latitude":52.5}`
+							"metro_code":0}`
 				fmt.Fprintf(w, response)
 			case "/66.102.15.255":
-				response := `{"dma_code":"0",
-							"ip":"66.102.15.255",
-							"asn":"AS15169",
-							"city":"Mountain View",
-							"latitude":37.4192,
+				response := `{"ip":"66.102.15.255",
 							"country_code":"US",
-							"offset":"-7",
-							"country":"United States",
+							"country_name":"United States",
 							"region_code":"CA",
-							"isp":"Google Inc.",
-							"timezone":"America/Los_Angeles",
-							"area_code":"0",
-							"continent_code":"NA",
+							"region_name":"California",
+							"city":"Mountain View",
+							"zip_code":"94043",
+							"time_zone":"America/Los_Angeles",
+							"latitude":37.4192,
 							"longitude":-122.0574,
-							"region":"California",
-							"postal_code":"94043",
-							"country_code3":"USA"}`
+							"metro_code":807}`
 				fmt.Fprintf(w, response)
 			case "/":
-				response := `{"country":"United Kingdom",
-							"isp":"ARM Ltd",
-							"longitude":0.1167,
-							"city":"Cambridge",
-							"region":"Cambridgeshire",
-							"postal_code":"CB5",
-							"offset":"1",
-							"asn":"AS28939",
-							"timezone":"Europe/London",
-							"ip":"217.140.98.70",
-							"continent_code":"EU",
-							"country_code3":"GBR",
-							"latitude":52.2,
-							"dma_code":"0",
+				response := `{"ip":"217.140.98.70",
 							"country_code":"GB",
-							"region_code":"C3",
-							"area_code":"0"}`
+							"country_name":"United Kingdom",
+							"region_code":"ENG",
+							"region_name":"England",
+							"city":"Saint Neots",
+							"zip_code":"CB5",
+							"time_zone":"Europe/London",
+							"longitude":0.1167,
+							"latitude":52.2,
+							"metro_code":0}`
 				fmt.Fprintf(w, response)
-
+			case "/github.com":
+				response := `{"ip":"192.30.252.130",
+							"country_code":"US",
+							"country_name":"United States",
+							"region_code":"CA",
+							"region_name":"California",
+							"city":"San Francisco",
+							"zip_code":"94107",
+							"time_zone":"America/Los_Angeles",
+							"latitude":37.7697,
+							"longitude":-122.3933,
+							"metro_code":807}`
+				fmt.Fprintf(w, response)
+			case "/abcxyz":
+				response := `404 page not found`
+				fmt.Fprintf(w, response)
 			}
 		}))
 		baseURI = ts.URL + "/"
@@ -85,19 +86,17 @@ func TestLocationWithIP6(t *testing.T) {
 	input := "2a02:2770::21a:4aff:feb3:2ee"
 
 	want := map[string]string{
-		"ip":             "2a02:2770::21a:4aff:feb3:2ee",
-		"isp":            "Tilaa V.O.F.",
-		"area_code":      "0",
-		"country_code":   "NL",
-		"country":        "Netherlands",
-		"offset":         "2",
-		"timezone":       "Europe/Amsterdam",
-		"country_code3":  "NLD",
-		"continent_code": "EU",
-		"longitude":      "5.75",
-		"dma_code":       "0",
-		"asn":            "AS196752",
-		"latitude":       "52.5",
+		"ip":           "2a02:2770::21a:4aff:feb3:2ee",
+		"country_code": "NL",
+		"country_name": "Netherlands",
+		"region_code":  "",
+		"region_name":  "",
+		"city":         "",
+		"zip_code":     "",
+		"time_zone":    "Europe/Amsterdam",
+		"latitude":     "52.25",
+		"longitude":    "5.75",
+		"metro_code":   "0",
 	}
 
 	got, err := Location(input)
@@ -122,23 +121,17 @@ func TestLocationWithIP4(t *testing.T) {
 	input := "66.102.15.255"
 
 	want := map[string]string{
-		"dma_code":       "0",
-		"ip":             "66.102.15.255",
-		"asn":            "AS15169",
-		"city":           "Mountain View",
-		"latitude":       "37.4192",
-		"country_code":   "US",
-		"offset":         "-7",
-		"country":        "United States",
-		"region_code":    "CA",
-		"isp":            "Google Inc.",
-		"timezone":       "America/Los_Angeles",
-		"area_code":      "0",
-		"continent_code": "NA",
-		"longitude":      "-122.0574",
-		"region":         "California",
-		"postal_code":    "94043",
-		"country_code3":  "USA",
+		"ip":           "66.102.15.255",
+		"country_code": "US",
+		"country_name": "United States",
+		"region_code":  "CA",
+		"region_name":  "California",
+		"city":         "Mountain View",
+		"zip_code":     "94043",
+		"time_zone":    "America/Los_Angeles",
+		"latitude":     "37.4192",
+		"longitude":    "-122.0574",
+		"metro_code":   "807",
 	}
 
 	got, err := Location(input)
@@ -160,23 +153,17 @@ func TestLocationWithNoIPProvided(t *testing.T) {
 	defer ts.Close()
 
 	want := map[string]string{
-		"country":        "United Kingdom",
-		"isp":            "ARM Ltd",
-		"longitude":      "0.1167",
-		"city":           "Cambridge",
-		"region":         "Cambridgeshire",
-		"postal_code":    "CB5",
-		"offset":         "1",
-		"asn":            "AS28939",
-		"timezone":       "Europe/London",
-		"ip":             "217.140.98.70",
-		"continent_code": "EU",
-		"country_code3":  "GBR",
-		"latitude":       "52.2",
-		"dma_code":       "0",
-		"country_code":   "GB",
-		"region_code":    "C3",
-		"area_code":      "0",
+		"ip":           "217.140.98.70",
+		"country_code": "GB",
+		"country_name": "United Kingdom",
+		"region_code":  "ENG",
+		"region_name":  "England",
+		"city":         "Saint Neots",
+		"zip_code":     "CB5",
+		"time_zone":    "Europe/London",
+		"longitude":    "0.1167",
+		"latitude":     "52.2",
+		"metro_code":   "0",
 	}
 
 	got, err := Location("")
@@ -190,4 +177,44 @@ func TestLocationWithNoIPProvided(t *testing.T) {
 			t.Errorf("Location data: got %s - %s want %s - %s", k, v, k, want[k])
 		}
 	}
+}
+
+// TestLocationWithDomain test location with a domain i.e. github.com
+func TestLocationWithDomain(t *testing.T) {
+	ts := startTestServer()
+	defer ts.Close()
+
+	input := "github.com"
+
+	want := map[string]string{
+		"ip":           "192.30.252.130",
+		"country_code": "US",
+		"country_name": "United States",
+		"region_code":  "CA",
+		"region_name":  "California",
+		"city":         "San Francisco",
+		"zip_code":     "94107",
+		"time_zone":    "America/Los_Angeles",
+		"latitude":     "37.7697",
+		"longitude":    "-122.3933",
+		"metro_code":   "807",
+	}
+
+	got, err := Location(input)
+
+	if err != nil {
+		t.Errorf("Location error: method returned error %s", err)
+	}
+
+	for k, v := range got {
+		if want[k] != v {
+			t.Errorf("Location data: got %s - %s want %s - %s", k, v, k, want[k])
+		}
+	}
+
+}
+
+// TestLocation404 test location with bad host or ip
+func TestLocation404(t *testing.T) {
+
 }
