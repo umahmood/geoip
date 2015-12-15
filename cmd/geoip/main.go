@@ -23,6 +23,10 @@ func main() {
 	}
 
 	for k, v := range loc {
-		fmt.Println(k, ":", v)
+		if v == "" {
+			fmt.Println(k, ": n/a")
+		} else {
+			fmt.Println(k, ":", v)
+		}
 	}
 }
