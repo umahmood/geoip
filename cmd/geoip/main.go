@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"net"
 
 	"github.com/umahmood/geoip"
 )
@@ -13,15 +12,8 @@ import (
 var ip string
 
 func init() {
-	flag.StringVar(&ip, "ip", "", "IP to geo locate can be v4 or v6 address.")
+	flag.StringVar(&ip, "ip", "", "IP to geo locate can be v4/v6 address or domain name.")
 	flag.Parse()
-
-	if ip != "" {
-		addr := net.ParseIP(ip)
-		if addr == nil {
-			log.Fatalln("not a valid IP address.")
-		}
-	}
 }
 
 func main() {
