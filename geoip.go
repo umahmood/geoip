@@ -10,7 +10,7 @@ import (
 	"strconv"
 )
 
-var baseURI = "https://www.telize.com/geoip/"
+var baseURI = "https://freegeoip.net/json/"
 
 // Location queries location information of an IP address. 'ip' can be a IPv4
 // or IPv6 address. It is the users job to make sure 'ip' is a valid IP address.
@@ -26,7 +26,7 @@ func Location(ip string) (map[string]string, error) {
 	}
 	m := make(map[string]string)
 	for k, v := range data {
-		if k == "latitude" || k == "longitude" {
+		if k == "latitude" || k == "longitude" || k == "metro_code" {
 			m[k] = strconv.FormatFloat(v.(float64), 'f', -1, 64)
 		} else {
 			m[k] = v.(string)
