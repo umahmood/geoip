@@ -1,13 +1,15 @@
 # GeoIP
 
-**Important: This tool uses the http://www.telize.com/ REST API to provide 
-query location information. Sadly, The public API for telize.com has permanently 
-shut down. I will update the tool to use as different geoip service when I have 
-some free time :)**  
-
 GeoIP is a command line tool, which allows you to query location information from 
-any IP address. GeoIP also exposes a library so you can also use it in your 
-application. 
+any IP address or domain name. GeoIP also exposes a Go library so you can also 
+use it in your application. 
+
+**Note**: Geoip uses [freegeoip.net](https://freegeoip.net) to provide geolocation 
+of IP addresses. The freegeoip web site states:
+
+*"You're allowed up to 10,000 queries per hour by default. Once this limit is 
+reached, all of your requests will result in HTTP 403, forbidden, until your 
+quota is cleared."*
 
 # Installation
 
@@ -45,9 +47,18 @@ You can also query IPv6 addresses:
 
 > $ geoip -ip 2a02:2770::21a:4aff:feb3:2ee
 
+And also query domain names:
+
+> $ geoip -ip github.com
+
 Providing no 'ip' flag, geoip will query your IP address:
 
 > $ geoip
+
+Providing a badly formed domain name or ip address, will return:
+
+> $ geoip -ip 123xyz789 <br/>
+> 2015/12/15 01:48:24 http 404 from https://freegeoip.net/json/
 
 # Documenation
 
