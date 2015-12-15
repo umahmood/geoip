@@ -68,6 +68,7 @@ func startTestServer() *httptest.Server {
 				fmt.Fprintf(w, response)
 			case "/abcxyz":
 				response := `404 page not found`
+				w.WriteHeader(http.StatusNotFound)
 				fmt.Fprintf(w, response)
 			}
 		}))
@@ -216,5 +217,18 @@ func TestLocationWithDomain(t *testing.T) {
 
 // TestLocation404 test location with bad host or ip
 func TestLocation404(t *testing.T) {
+	ts := startTestServer()
+	defer ts.Close()
 
+	input := "abcxyz"
+
+	got, err := Location(input)
+
+	if err != ErrReq {
+		t.Errorf("Location error: method returned error %s", err)
+	}
+
+	if got != nil {
+		t.Errorf("Location data: got %v want %v", got, nil)
+	}
 }
