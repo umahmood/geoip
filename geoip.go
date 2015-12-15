@@ -12,6 +12,8 @@ import (
 
 var baseURI = "https://freegeoip.net/json/"
 
+var ErrReq error
+
 // Location queries location information of an IP address. 'ip' can be a IPv4
 // or IPv6 address. It is the users job to make sure 'ip' is a valid IP address.
 func Location(ip string) (map[string]string, error) {
@@ -47,7 +49,8 @@ func performRequest(uri string) ([]byte, error) {
 	}
 	if res.StatusCode != http.StatusOK {
 		e := fmt.Sprintf("http %d from %s", res.StatusCode, baseURI)
-		return nil, errors.New(e)
+		ErrReq = errors.New(e)
+		return nil, ErrReq
 	}
 	return body, nil
 }
