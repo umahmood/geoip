@@ -12,6 +12,7 @@ import (
 
 var baseURI = "https://freegeoip.net/json/"
 
+// ErrReq contains error information for requests to baseURI
 var ErrReq error
 
 // Location queries location information of an IP address. 'ip' can be a IPv4/
